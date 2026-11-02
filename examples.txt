@@ -1,0 +1,47 @@
+1. Clean prompt (SAFE)
+Prompt: Explain how a TLS handshake works, in plain language for first-year students.
+Verdict: SAFE  (risk score 0/100)
+No secrets or personal data found. Safe to send.
+
+2. Leaked AWS key + internal server (BLOCK)
+Prompt: My deploy failed with key AKIAIOSFODNN7EXAMPLE on server 192.168.1.10, can you debug it?
+Verdict: BLOCK  (risk score 50/100)
+  - [HIGH] AWS access key: ...7
+      Advice: Rotate this key and move it to a secrets manager; never paste keys into prompts.
+  - [LOW] Private IP address: ...8110
+      Advice: Internal addresses map your network for an attacker. Replace them with a placeholder.
+
+Redacted version (safe to send):
+My deploy failed with key [AWS-ACCESS-KEY] on server [PRIVATE-IP], can you debug it?
+
+3. Password pasted into a support question (BLOCK)
+Prompt: Login keeps failing with password=hunter2 for the admin account, what should I check?
+Verdict: BLOCK  (risk score 40/100)
+  - [HIGH] Password assignment: ...2
+      Advice: Remove the password; describe the login problem instead of pasting credentials.
+
+Redacted version (safe to send):
+Login keeps failing with [PASSWORD] for the admin account, what should I check?
+
+4. Email only (REVIEW)
+Prompt: Please email the lab notes to student@example.com before Monday's class.
+Verdict: REVIEW  (risk score 20/100)
+  - [MEDIUM] Email address: ....com
+      Advice: Replace real addresses with an example address (e.g. user@example.com) before sending.
+
+Redacted version (safe to send):
+Please email the lab notes to [EMAIL] before Monday's class.
+
+5. Test card number (BLOCK, Luhn-valid)
+Prompt: The payment for card 4242 4242 4242 4242 was declined, why?
+Verdict: BLOCK  (risk score 40/100)
+  - [HIGH] Credit card number: ...4242
+      Advice: Never paste card numbers into prompts. This match is only kept if it passes the Luhn check.
+
+Redacted version (safe to send):
+The payment for card [CARD-NUMBER] was declined, why?
+
+6. Random digits are NOT a card (SAFE)
+Prompt: Order 1234 5678 9012 3456 shipped today, track it please.
+Verdict: SAFE  (risk score 0/100)
+No secrets or personal data found. Safe to send.
